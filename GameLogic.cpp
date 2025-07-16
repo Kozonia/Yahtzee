@@ -1,1 +1,159 @@
 #include "GameLogic.h"
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+GameLogic::GameLogic() : numOfDice(5), subRounds(3), numOfCategories(6), rounds(6)
+{
+	diceHand = new Die[numOfDice];
+	scoreBoard = new int[numOfCategories];
+	totalScore = 0;
+	pickedDice = 0;
+	pickedDiceAmount = 0;
+	scoreCategory = 0;
+	roundCount = 1;
+	subRoundCount = 1;
+}
+
+GameLogic::~GameLogic()
+{
+	delete diceHand;
+	delete scoreBoard;
+}
+
+void GameLogic::printRolledValues() //MOVE TO CONSOLE UI
+{
+	for (int i = 0; i < numOfDice; i++)
+	{
+		cout << diceHand[i].getFaceValue() << " ";
+	}
+	cout << endl;
+}
+
+void GameLogic::rollDiceHand()
+{
+	cout << "Roll " << subRoundCount << endl; //MOVE TO CONSOLE UI printSubrounds()
+	for (int i = 0; i < numOfDice; i++)
+	{
+		diceHand[i].roll();
+	}
+	
+
+}
+
+void GameLogic::reRollDice(int amount)
+{
+	cout << "Enter Which Dice to roll (one at a time): " << endl; // Maybe move to console UI printReRollText()
+	for (int i = 0; i < amount; i++)
+	{
+		do {
+			cin >> pickedDice;
+			if (pickedDice > 0 && pickedDice <= numOfDice)
+			{
+				diceHand[pickedDice - 1].roll();
+			}
+			else
+			{
+				cout << "error"; //CONSOLE UI errorText()
+			}
+		} while (0 > pickedDice || pickedDice > numOfDice);
+	}
+	cout << "Roll " << subRoundCount << endl; //MOVE TO CONSOLE UI printSubrounds()
+}
+
+void GameLogic::printScore() //MOVE TO CONSOLE UI
+{
+	cout << totalScore;
+}
+
+int GameLogic::getRoundsCount()
+{
+	return rounds;
+}
+
+int GameLogic::getSubRoundsCount()
+{
+	return subRounds;
+}
+
+int GameLogic::getScore()
+{
+	return totalScore;
+}
+
+int GameLogic::countNums(int target)
+{
+	int totalNums = 0;
+	for (int i = 0; i < numOfDice; i++)
+	{
+		if (diceHand[i].getFaceValue() == target)
+		{
+			totalNums += target;
+		}
+	}
+	return totalNums;
+}
+
+void GameLogic::ScoreDice()
+{
+	//displayScoreboard() CONSOLE UI
+	cout << "Which category do you want to score under this round?" << endl
+		<< "1.Aces" << endl << "2.Twos" << endl << "3.Threes" << endl
+		<< "4.Fours" << endl << "5.Fives" << endl << "6.Sixes" << endl;
+	do {
+		cin >> scoreCategory;
+
+		if (0 < scoreCategory && scoreCategory <= 6)
+		{
+			scoreBoard[scoreCategory] = countNums(scoreCategory);
+		}
+		else
+		{
+			cout << "error";//errorText() CONSOLE UI
+
+		}
+	} while (0 > scoreCategory || scoreCategory > 6);
+	
+}
+
+void GameLogic::playGame()
+{
+	roundCount = 1;
+
+	do {
+		subRoundCount = 1;
+		do {
+
+			if (subRoundCount == 1)
+			{
+				rollDiceHand();
+				printRolledValues();
+			}
+			else
+			{
+				cout << "Enter how many dice you want to re-roll (Enter 0 to lock in dice): " << endl; //MOVE TO CONSOLE UI printReRollAmountText()
+				do {
+					cin >> pickedDiceAmount;
+
+					if (0 < pickedDiceAmount && pickedDiceAmount <= numOfDice)
+					{
+						reRollDice(pickedDiceAmount);
+						printRolledValues();
+					}
+					else if (pickedDiceAmount > numOfDice)
+					{
+						cout << "error";//errorText() CONSOLE UI
+					}
+					else
+					{
+						subRoundCount = 3;
+					}
+				} while (0 > pickedDiceAmount || pickedDiceAmount > numOfDice);
+			}
+			subRoundCount++;
+		} while (subRoundCount <= subRounds);
+		ScoreDice();
+		roundCount++;
+	} while (roundCount <= rounds);
+}
