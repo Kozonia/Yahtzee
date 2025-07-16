@@ -19,7 +19,7 @@ private:
 	int scoreCategory;
 	int roundCount;
 	int subRoundCount;
-	void printRolledValues(); //MOVE TO CONSOLE UI
+	void printRolledValues();
 	void rollDiceHand();
 	void reRollDice(int amount);
 	int countNums(int target);

@@ -10,9 +10,9 @@ int main()
 {
 	srand(time(0));
 
-	Die GameDie;
+	//Die GameDie;
 	GameLogic Game;
-	//ConsoleUI UI
+	
 
 	Game.playGame();
 
