@@ -18,8 +18,8 @@ GameLogic::GameLogic() : numOfDice(5), subRounds(3), numOfCategories(6), rounds(
 
 GameLogic::~GameLogic()
 {
-	delete diceHand;
-	delete scoreBoard;
+	delete[] diceHand;
+	delete[] scoreBoard;
 }
 
 void GameLogic::printRolledValues() //MOVE TO CONSOLE UI
@@ -57,7 +57,7 @@ void GameLogic::reRollDice(int amount)
 			{
 				cout << "error"; //CONSOLE UI errorText()
 			}
-		} while (0 > pickedDice || pickedDice > numOfDice);
+		} while (1 > pickedDice || pickedDice > numOfDice);
 	}
 	cout << "Roll " << subRoundCount << endl; //MOVE TO CONSOLE UI printSubrounds()
 }
@@ -97,6 +97,7 @@ int GameLogic::countNums(int target)
 
 void GameLogic::ScoreDice()
 {
+	
 	//displayScoreboard() CONSOLE UI
 	cout << "Which category do you want to score under this round?" << endl
 		<< "1.Aces" << endl << "2.Twos" << endl << "3.Threes" << endl
@@ -106,14 +107,22 @@ void GameLogic::ScoreDice()
 
 		if (0 < scoreCategory && scoreCategory <= 6)
 		{
-			scoreBoard[scoreCategory] = countNums(scoreCategory);
+			scoreBoard[scoreCategory - 1] = countNums(scoreCategory);
 		}
 		else
 		{
 			cout << "error";//errorText() CONSOLE UI
-
+			
 		}
 	} while (0 > scoreCategory || scoreCategory > 6);
+
+	if (roundCount == 6)
+	{
+		for (int i = 0; i < numOfCategories; i++)
+		{
+			totalScore += scoreBoard[i];
+		}
+	}
 	
 }
 
@@ -156,4 +165,7 @@ void GameLogic::playGame()
 		ScoreDice();
 		roundCount++;
 	} while (roundCount <= rounds);
+
+	cout << "Score: "; //MOVE TO CONSOLE UI
+	printScore();
 }
